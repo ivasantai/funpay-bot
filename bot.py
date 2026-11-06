@@ -44,6 +44,27 @@ def _patched_method(self, request_method, api_method, headers, payload,
 
 Account.method = _patched_method
 
+_orig_parse_messages = Account._Account__parse_messages
+
+
+def _patched_parse_messages(self, json_messages, *args, **kwargs):
+    """FunPay переименовал класс текста сообщения: message-text -> chat-msg-text.
+    Подменяем класс обратно, чтобы парсер FunPayAPI 1.1.0 его находил."""
+    fixed = []
+    for m in json_messages:
+        m = dict(m)
+        h = m.get("html", "")
+        h = h.replace('class="chat-msg-text"', 'class="message-text"')
+        if ('class="message-text"' not in h and "chat-img-link" not in h
+                and "alert-with-icon" not in h):
+            h += '<div class="message-text"></div>'  # на случай сообщений без текста
+        m["html"] = h
+        fixed.append(m)
+    return _orig_parse_messages(self, fixed, *args, **kwargs)
+
+
+Account._Account__parse_messages = _patched_parse_messages
+
 
 def load_env(path: str = ".env") -> None:
     if not os.path.exists(path):
