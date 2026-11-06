@@ -77,7 +77,14 @@ def load_env(path: str = ".env") -> None:
                 os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 
-def send_telegram(token: str, chat_id: str, text: str) -> None:
+def send_telegram(token: str, chat_ids: str, text: str) -> None:
+    """chat_ids — один id или несколько через запятую."""
+    for chat_id in (c.strip() for c in chat_ids.split(",")):
+        if chat_id:
+            _send_one(token, chat_id, text)
+
+
+def _send_one(token: str, chat_id: str, text: str) -> None:
     try:
         r = requests.post(
             f"https://api.telegram.org/bot{token}/sendMessage",
@@ -90,7 +97,7 @@ def send_telegram(token: str, chat_id: str, text: str) -> None:
             timeout=15,
         )
         if not r.ok:
-            log.error("Telegram: %s %s", r.status_code, r.text)
+            log.error("Telegram (chat %s): %s %s", chat_id, r.status_code, r.text)
     except requests.RequestException as e:
         log.error("Telegram недоступен: %s", e)
 
