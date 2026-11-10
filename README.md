@@ -1,11 +1,11 @@
-# FunPay → Telegram: уведомления о сообщениях и заказах
+# FunPay → Telegram: new message and order notifications
 
-Бот следит за вашим аккаунтом на [FunPay](https://funpay.com) и мгновенно присылает в Telegram:
+The bot watches your [FunPay](https://funpay.com) account and instantly sends to Telegram:
 
-- 💬 **новые сообщения** в чатах: от кого, текст (или пометку «изображение») и ссылку на чат;
-- 🛒 **новые заказы**: номер, покупатель, товар, сумма и ссылку на заказ.
+- 💬 **new chat messages**: who wrote, the text (or an "image" note) and a link to the chat;
+- 🛒 **new orders**: order number, buyer, item, price and a link to the order.
 
-Свои собственные сообщения бот не пересылает. Уведомления можно слать сразу в несколько чатов Telegram.
+Your own messages are not forwarded. Notifications can be sent to several Telegram chats at once.
 
 ```
 💬 Новое сообщение от buyer_123
@@ -13,17 +13,19 @@
 Открыть чат
 ```
 
-## Как это работает
+> The notification texts are in Russian ("Новое сообщение от" = "New message from", "Открыть чат" = "Open chat"). You can change them in `bot.py`.
 
-FunPay не даёт официального API, поэтому бот заходит на сайт так же, как браузер: по cookie `golden_key` вашего аккаунта. Раз в несколько секунд (по умолчанию 6) он опрашивает FunPay через библиотеку [FunPayAPI](https://pypi.org/project/FunPayAPI/). Когда появляется новое сообщение или заказ, бот отправляет его в Telegram через Bot API.
+## How it works
 
-Бот только **читает** данные: он ничего не пишет в чаты, не трогает лоты и заказы.
+FunPay has no official API, so the bot signs in the same way a browser does: with your account's `golden_key` cookie. Every few seconds (6 by default) it polls FunPay through the [FunPayAPI](https://pypi.org/project/FunPayAPI/) library. When a new message or order appears, the bot sends it to Telegram via the Bot API.
 
-> ⚠️ `golden_key` даёт полный доступ к вашему аккаунту FunPay. Никому его не передавайте и не коммитьте файл `.env`, он уже в `.gitignore`.
+The bot is **read-only**: it doesn't write to chats or touch your lots and orders.
 
-## Быстрый старт (на своём компьютере)
+> ⚠️ `golden_key` gives full access to your FunPay account. Never share it and never commit your `.env` file (it is already in `.gitignore`).
 
-Нужен Python 3.10+.
+## Quick start (on your own computer)
+
+Requires Python 3.10+.
 
 ```bash
 git clone https://github.com/ivasantai/funpay-bot.git
@@ -43,51 +45,51 @@ Linux / macOS:
 .venv/bin/pip install -r requirements.txt
 ```
 
-Скопируйте `.env.example` в `.env` и заполните его (откуда брать значения, см. [настройку](docs/SETUP.md)). Затем запустите:
+Copy `.env.example` to `.env` and fill it in (see [setup](docs/SETUP.md) for where to get the values). Then run:
 
 ```bash
 .venv/Scripts/python bot.py
 ```
 
-На Linux / macOS: `.venv/bin/python bot.py`. Если всё в порядке, в Telegram придёт «✅ Бот запущен».
+On Linux / macOS: `.venv/bin/python bot.py`. If everything is fine, you'll get "✅ Бот запущен" ("Bot started") in Telegram.
 
-## Настройки
+## Configuration
 
-Все настройки задаются переменными окружения или в файле `.env`:
+All settings are environment variables or lines in the `.env` file:
 
-| Переменная | Обязательна | Описание |
+| Variable | Required | Description |
 |---|---|---|
-| `FUNPAY_GOLDEN_KEY` | да | Cookie `golden_key` с funpay.com |
-| `TELEGRAM_BOT_TOKEN` | да | Токен бота от [@BotFather](https://t.me/BotFather) целиком, вместе с двоеточием |
-| `TELEGRAM_CHAT_ID` | да | Ваш chat id. Несколько id указываются через запятую: `123456789,987654321` |
-| `POLL_DELAY` | нет | Интервал опроса FunPay в секундах, по умолчанию `6` |
-| `PORT` | нет | Если задан, бот поднимает HTTP-эндпоинт `/` с ответом `ok` (нужен для Render и UptimeRobot) |
+| `FUNPAY_GOLDEN_KEY` | yes | The `golden_key` cookie from funpay.com |
+| `TELEGRAM_BOT_TOKEN` | yes | Bot token from [@BotFather](https://t.me/BotFather), the whole thing including the colon |
+| `TELEGRAM_CHAT_ID` | yes | Your chat id. For several recipients separate ids with commas: `123456789,987654321` |
+| `POLL_DELAY` | no | FunPay polling interval in seconds, `6` by default |
+| `PORT` | no | If set, the bot serves an HTTP endpoint `/` that answers `ok` (needed for Render and UptimeRobot) |
 
-## Документация
+## Documentation
 
-- [Настройка: golden_key, Telegram-бот, chat id](docs/SETUP.md)
-- [Хостинг 24/7: Render + UptimeRobot (бесплатно) или свой VPS](docs/DEPLOY.md)
-- [Если что-то не работает](docs/TROUBLESHOOTING.md)
+- [Setup: golden_key, Telegram bot, chat id](docs/SETUP.md)
+- [24/7 hosting: Render + UptimeRobot (free) or your own VPS](docs/DEPLOY.md)
+- [Troubleshooting](docs/TROUBLESHOOTING.md)
 
-## Файлы проекта
+## Project files
 
-| Файл | Что это |
+| File | Purpose |
 |---|---|
-| `bot.py` | Сам бот |
-| `requirements.txt` | Зависимости Python |
-| `.env.example` | Шаблон настроек |
-| `render.yaml` | Blueprint для деплоя на Render |
-| `install.sh` | Установка на Linux-сервер как systemd-сервиса |
+| `bot.py` | The bot itself |
+| `requirements.txt` | Python dependencies |
+| `.env.example` | Settings template |
+| `render.yaml` | Blueprint for deploying to Render |
+| `install.sh` | Installs the bot on a Linux server as a systemd service |
 
-## Совместимость с FunPay
+## FunPay compatibility
 
-Библиотека FunPayAPI 1.1.0 больше не обновляется, а FunPay время от времени меняет сайт. Поэтому в `bot.py` есть две заплатки поверх библиотеки:
+FunPayAPI 1.1.0 is no longer maintained, and FunPay changes its website from time to time. That's why `bot.py` contains two patches on top of the library:
 
-1. **cookie `golden_seal`**: FunPay стал требовать её для запросов к `runner/`. Бот отправляет запросы через `requests.Session`, которая сохраняет все cookie, выданные сайтом.
-2. **класс `chat-msg-text`**: текст сообщения в HTML чата раньше лежал в `message-text`. Бот подменяет класс обратно, чтобы парсер библиотеки находил текст.
+1. **`golden_seal` cookie**: FunPay now requires it for requests to `runner/`. The bot sends requests through a `requests.Session` that keeps every cookie the site sets.
+2. **`chat-msg-text` class**: the message text in the chat HTML used to be in `message-text`. The bot renames the class back so the library's parser can find the text.
 
-Если бот внезапно перестал присылать уведомления, скорее всего FunPay снова что-то поменял, см. [TROUBLESHOOTING](docs/TROUBLESHOOTING.md).
+If the bot suddenly stops sending notifications, FunPay has most likely changed something again; see [TROUBLESHOOTING](docs/TROUBLESHOOTING.md).
 
-## Дисклеймер
+## Disclaimer
 
-Это неофициальный проект, не связанный с FunPay. Используйте на свой риск и в соответствии с правилами площадки.
+This is an unofficial project, not affiliated with FunPay. Use it at your own risk and in accordance with the marketplace rules.

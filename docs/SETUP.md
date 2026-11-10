@@ -1,59 +1,59 @@
-# Настройка
+# Setup
 
-Боту нужны три значения. Их кладут в файл `.env` (локально) или в переменные окружения (на хостинге).
+The bot needs three values. Put them in the `.env` file (when running locally) or in environment variables (on a hosting service).
 
-## 1. `FUNPAY_GOLDEN_KEY`: доступ к аккаунту FunPay
+## 1. `FUNPAY_GOLDEN_KEY`: access to your FunPay account
 
-1. Откройте [funpay.com](https://funpay.com) в браузере и войдите в аккаунт.
-2. Нажмите **F12** и перейдите на вкладку **Application**. В Firefox она называется **Хранилище / Storage**.
-3. Слева выберите **Cookies → https://funpay.com**.
-4. Найдите строку `golden_key` и скопируйте её значение: 32 символа из букв и цифр.
+1. Open [funpay.com](https://funpay.com) in your browser and sign in.
+2. Press **F12** and go to the **Application** tab (in Firefox it's called **Storage**).
+3. On the left, select **Cookies → https://funpay.com**.
+4. Find the `golden_key` row and copy its value: 32 letters and digits.
 
 ```
 FUNPAY_GOLDEN_KEY=abcd1234...
 ```
 
-> `golden_key` — это фактически пароль от аккаунта. Если вы выйдете из аккаунта на FunPay («Выйти на всех устройствах» или смена пароля), ключ перестанет работать. Тогда скопируйте новый.
+> `golden_key` is effectively the password to your account. If you sign out on FunPay ("sign out on all devices" or a password change), the key stops working. Copy the new one in that case.
 
-## 2. `TELEGRAM_BOT_TOKEN`: свой Telegram-бот
+## 2. `TELEGRAM_BOT_TOKEN`: your own Telegram bot
 
-1. Напишите [@BotFather](https://t.me/BotFather) и отправьте `/newbot`.
-2. Придумайте имя и username бота (username должен заканчиваться на `bot`).
-3. BotFather пришлёт токен вида `1234567890:AAH5kXyZ-abcd...`. Вставляйте его **целиком**, вместе с цифрами до двоеточия.
+1. Message [@BotFather](https://t.me/BotFather) and send `/newbot`.
+2. Choose a name and a username for the bot (the username must end with `bot`).
+3. BotFather will send a token like `1234567890:AAH5kXyZ-abcd...`. Paste it **in full**, including the digits before the colon.
 
 ```
 TELEGRAM_BOT_TOKEN=1234567890:AAH5kXyZ-abcdEFGhijkLMNop_qrstUVwx
 ```
 
-## 3. `TELEGRAM_CHAT_ID`: кому присылать уведомления
+## 3. `TELEGRAM_CHAT_ID`: who receives notifications
 
-1. Напишите [@userinfobot](https://t.me/userinfobot), он ответит вашим числовым `Id`.
-2. **Обязательно** откройте своего нового бота и нажмите **Start**. Иначе Telegram не разрешит боту писать вам первым, и в логе будет ошибка `403 Forbidden: bot can't initiate conversation`.
+1. Message [@userinfobot](https://t.me/userinfobot); it will reply with your numeric `Id`.
+2. **Make sure** to open your new bot and press **Start**. Otherwise Telegram won't let the bot message you first, and the log will show `403 Forbidden: bot can't initiate conversation`.
 
 ```
 TELEGRAM_CHAT_ID=123456789
 ```
 
-### Несколько получателей
+### Several recipients
 
-Перечислите id через запятую, без пробелов. Каждый получатель тоже должен нажать **Start** у бота.
+List the ids separated by commas, without spaces. Every recipient must also press **Start** in the bot.
 
 ```
 TELEGRAM_CHAT_ID=123456789,987654321
 ```
 
-Можно указать и id группы. Он начинается с `-100…`, а бота нужно добавить в эту группу.
+You can also use a group id. It starts with `-100…`, and the bot must be added to that group.
 
-## 4. `POLL_DELAY` (необязательно)
+## 4. `POLL_DELAY` (optional)
 
-Как часто опрашивать FunPay, в секундах. По умолчанию `6`. Сильно уменьшать не стоит: частые запросы могут не понравиться FunPay.
+How often to poll FunPay, in seconds. `6` by default. Don't make it much lower: FunPay may not like frequent requests.
 
-## Проверка
+## Checking that it works
 
-Запустите `python bot.py`. В консоли появится строка:
+Run `python bot.py`. The console will show a line like:
 
 ```
-INFO Вошёл на FunPay как <ваш ник> (id ...)
+INFO Вошёл на FunPay как <your nickname> (id ...)
 ```
 
-А в Telegram придёт «✅ Бот запущен, аккаунт FunPay: …». Если нет, смотрите [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+("Signed in to FunPay as …"). And Telegram will receive "✅ Бот запущен, аккаунт FunPay: …" ("Bot started, FunPay account: …"). If not, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md).

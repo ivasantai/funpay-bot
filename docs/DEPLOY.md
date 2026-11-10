@@ -1,45 +1,45 @@
-# Хостинг 24/7
+# 24/7 hosting
 
-Бот на домашнем компьютере работает, только пока компьютер включён. Ниже два способа держать его онлайн постоянно.
+On your home computer the bot runs only while the computer is on. Below are two ways to keep it online all the time.
 
-> Запускайте бота **только в одном месте**. Если он работает одновременно, например, на компьютере и на хостинге, каждое уведомление придёт дважды.
+> Run the bot **in one place only**. If it runs in two places at once (for example, on your computer and on a host), every notification will arrive twice.
 
-## Вариант 1. Render + UptimeRobot (бесплатно)
+## Option 1. Render + UptimeRobot (free)
 
-Бесплатный веб-сервис на [Render](https://render.com) засыпает через 15 минут, если к нему никто не обращается. Чтобы этого не было, бот поднимает простой HTTP-эндпоинт, а [UptimeRobot](https://uptimerobot.com) заходит на него каждые 5 минут.
+A free web service on [Render](https://render.com) goes to sleep after 15 minutes without incoming requests. To prevent that, the bot serves a simple HTTP endpoint, and [UptimeRobot](https://uptimerobot.com) pings it every 5 minutes.
 
-### Шаги
+### Steps
 
-1. Сделайте **форк** этого репозитория (или залейте код в свой репозиторий на GitHub).
-2. На render.com войдите через GitHub и выберите **New → Blueprint**.
-3. Укажите свой репозиторий. Render прочитает [`render.yaml`](../render.yaml) и попросит ввести:
+1. **Fork** this repository (or push the code to your own GitHub repository).
+2. On render.com, sign in with GitHub and choose **New → Blueprint**.
+3. Select your repository. Render will read [`render.yaml`](../render.yaml) and ask you to enter:
    - `FUNPAY_GOLDEN_KEY`
    - `TELEGRAM_BOT_TOKEN`
    - `TELEGRAM_CHAT_ID`
 
-   Откуда их брать, описано в [SETUP.md](SETUP.md).
-4. Нажмите **Apply**. Сборка займёт пару минут, после неё в Telegram придёт «✅ Бот запущен».
-5. Скопируйте адрес сервиса вида `https://funpay-bot-xxxx.onrender.com`. Если открыть его в браузере, должно показаться `ok`.
-6. На uptimerobot.com создайте монитор:
+   See [SETUP.md](SETUP.md) for where to get them.
+4. Click **Apply**. The build takes a couple of minutes; after that you'll get "✅ Бот запущен" ("Bot started") in Telegram.
+5. Copy the service URL, something like `https://funpay-bot-xxxx.onrender.com`. Opening it in a browser should show `ok`.
+6. On uptimerobot.com, create a monitor:
    - **Monitor Type:** HTTP(s)
-   - **URL:** адрес из шага 5
+   - **URL:** the URL from step 5
    - **Monitoring Interval:** 5 minutes
 
-### Как обновлять
+### Updating
 
-Каждый `git push` в ветку `main` Render подхватывает автоматически и пересобирает бота.
+Render picks up every `git push` to the `main` branch automatically and rebuilds the bot.
 
-Переменные (например, новый `golden_key` или ещё один chat id) меняются в **Environment** сервиса. После **Save Changes** бот перезапустится сам.
+Variables (for example, a new `golden_key` or another chat id) are changed in the service's **Environment** tab. After **Save Changes** the bot restarts by itself.
 
-### Ограничения бесплатного тарифа
+### Free plan limitations
 
-- 750 часов в месяц на аккаунт. Для одного сервиса этого хватает на весь месяц.
-- Иногда Render перезапускает сервис. Бот при этом присылает «✅ Бот запущен» заново, это нормально.
-- Сообщения, пришедшие ровно в момент перезапуска (несколько секунд), могут потеряться.
+- 750 hours per month per account. That's enough for one service to run the whole month.
+- Render restarts the service now and then. The bot sends "✅ Бот запущен" again when that happens; this is normal.
+- Messages that arrive exactly during a restart (a few seconds) may be missed.
 
-## Вариант 2. Свой Linux-сервер (VPS)
+## Option 2. Your own Linux server (VPS)
 
-Подходит любой VPS с Ubuntu или Debian, в том числе бесплатный Oracle Cloud Always Free. Это надёжнее, чем Render: сервер не засыпает и не перезапускается сам.
+Any VPS with Ubuntu or Debian will do, including the free Oracle Cloud Always Free tier. This is more reliable than Render: the server doesn't sleep or restart on its own.
 
 ```bash
 git clone https://github.com/ivasantai/funpay-bot.git
@@ -49,9 +49,9 @@ nano .env
 sudo bash install.sh
 ```
 
-В `nano` заполните ключи. Скрипт [`install.sh`](../install.sh) поставит Python, создаст виртуальное окружение, установит зависимости и зарегистрирует systemd-сервис `funpay-bot`. Сервис стартует при загрузке сервера и перезапускается при падении.
+Fill in the keys in `nano`. The [`install.sh`](../install.sh) script installs Python, creates a virtual environment, installs the dependencies and registers a `funpay-bot` systemd service. The service starts when the server boots and restarts if it crashes.
 
-Полезные команды:
+Useful commands:
 
 ```bash
 journalctl -u funpay-bot -f
@@ -65,9 +65,9 @@ sudo systemctl restart funpay-bot
 sudo systemctl stop funpay-bot
 ```
 
-Первая показывает логи в реальном времени, вторая перезапускает бота (например, после изменения `.env`), третья его останавливает.
+The first shows live logs, the second restarts the bot (for example, after editing `.env`), the third stops it.
 
-Обновление:
+Updating:
 
 ```bash
 cd funpay-bot && git pull && sudo systemctl restart funpay-bot
